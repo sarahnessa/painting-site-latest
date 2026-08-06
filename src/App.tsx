@@ -119,7 +119,8 @@ export default function App() {
               ].map((s) => (
                 <button
                   key={s.id}
-                  onClick={() => setPage(s.id as Page)}
+                  // Disabled Series links -- Uncomment in order to enable
+                  // onClick={() => setPage(s.id as Page)}
                   className="block text-sm transition-colors hover:opacity-70"
                   style={{ color: "#D1D5DB" }}
                 >
