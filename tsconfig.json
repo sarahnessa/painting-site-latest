@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "allowJs": true,          // Allows TS files to import JS/JSX files
+    "checkJs": false,         // Disables type-checking on JS/JSX files (stops errors in them)
+    "jsx": "react-jsx",       // Ensures modern JSX compilation works smoothly
+    "noEmit": true,           // Ensures Vite handles building, not TypeScript
+    "skipLibCheck": true     // Skips type checking of declaration files
+  }
+}
