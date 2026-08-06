@@ -8,7 +8,6 @@ import pollen from '../images/pollen.jpg';
 import gingko from '../images/gingko.jpg';
 
 
-
 interface HomeProps {
   onNav: (page: string) => void;
 }
@@ -40,6 +39,7 @@ const homepagePaintings = [
     series: "Nature × Spirit",
   },
 ];
+
 
 export default function Home({ onNav }: HomeProps) {
   return (
@@ -131,7 +131,8 @@ export default function Home({ onNav }: HomeProps) {
             ].map((s) => (
               <button
                 key={s.page}
-                onClick={() => onNav(s.page)}
+                // Disabled Series button clicks for now -- Add Variable s.page in order to enable
+                onClick={() => onNav('')}
                 className="px-5 py-2.5 rounded-full text-base font-medium transition-all hover:scale-105"
                 style={{ backgroundColor: s.color, color: s.text }}
               >
