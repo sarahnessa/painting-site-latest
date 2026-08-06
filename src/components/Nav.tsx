@@ -6,7 +6,8 @@ interface NavProps {
   onCartOpen: () => void;
 }
 
-const SERIES_IDS = new Set(["nature-spirit", "science-art", "travel-gems"]);
+// Nav Series Links are currently disabled - Uncomment in order to enable
+// const SERIES_IDS = new Set(["nature-spirit", "science-art", "travel-gems"]);
 
 export default function Nav({ page, onNav, cartCount, onCartOpen }: NavProps) {
   const links = [
