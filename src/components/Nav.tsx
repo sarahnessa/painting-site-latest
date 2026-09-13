@@ -1,3 +1,4 @@
+import { useState } from "react";
 
 interface NavProps {
   page: string;
@@ -6,8 +7,8 @@ interface NavProps {
   onCartOpen: () => void;
 }
 
-// Nav Series Links are currently disabled - Uncomment in order to enable
-// const SERIES_IDS = new Set(["nature-spirit", "science-art", "travel-gems"]);
+//Uncomment to enable series links
+//const SERIES_IDS = new Set(["nature-spirit", "science-art", "travel-gems"]);
 
 export default function Nav({ page, onNav, cartCount, onCartOpen }: NavProps) {
   const links = [
@@ -17,6 +18,13 @@ export default function Nav({ page, onNav, cartCount, onCartOpen }: NavProps) {
     { id: "travel-gems", label: "Travel Gems", wip: true },
     { id: "contact", label: "Contact", wip: false },
   ];
+
+  //Disable links
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+
+  const handleClick = () => {
+    setIsDisabled(true);
+  };
 
   return (
     <header
@@ -42,10 +50,17 @@ export default function Nav({ page, onNav, cartCount, onCartOpen }: NavProps) {
           {links.map((link) =>
             link.wip ? (
               <span
+                //Delete aria-disabled and onClick attributes to enable links
+                aria-disabled={isDisabled}
+                onClick={handleClick}
                 key={link.id}
                 className="wip-tooltip text-sm font-medium cursor-default select-none"
                 data-tip="Work in progress"
-                style={{ color: "#C4BAA8", borderBottom: "1.5px solid transparent", paddingBottom: "2px" }}
+                style={{
+                  color: "#C4BAA8",
+                  borderBottom: "1.5px solid transparent",
+                  paddingBottom: "2px",
+                }}
               >
                 {link.label}
               </span>
@@ -56,13 +71,16 @@ export default function Nav({ page, onNav, cartCount, onCartOpen }: NavProps) {
                 className="text-sm font-medium transition-colors"
                 style={{
                   color: page === link.id ? "#E68A00" : "#6B6880",
-                  borderBottom: page === link.id ? "1.5px solid #FFD15C" : "1.5px solid transparent",
+                  borderBottom:
+                    page === link.id
+                      ? "1.5px solid #FFD15C"
+                      : "1.5px solid transparent",
                   paddingBottom: "2px",
                 }}
               >
                 {link.label}
               </button>
-            )
+            ),
           )}
         </div>
 
@@ -73,14 +91,35 @@ export default function Nav({ page, onNav, cartCount, onCartOpen }: NavProps) {
           style={{ backgroundColor: "#FFF6D0", color: "#E68A00" }}
         >
           {/* Flat blob cart icon */}
-          <svg width="18" height="18" viewBox="-10 -10 20 20" fill="none" aria-hidden="true">
+          <svg
+            width="18"
+            height="18"
+            viewBox="-10 -10 20 20"
+            fill="none"
+            aria-hidden="true"
+          >
             <path
               d="M8,-2 C9,2 7,7 3,9 C-1,11 -6,9 -8,5 C-10,1 -8,-4 -4,-7 C0,-10 7,-6 8,-2 Z"
               fill="#FFD15C"
               opacity="0.5"
             />
-            <rect x="-6" y="-3" width="12" height="8" rx="1.5" fill="currentColor" opacity="0.85" />
-            <path d="M-3,-3 L-3,-5 C-3,-7 3,-7 3,-5 L3,-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.7" />
+            <rect
+              x="-6"
+              y="-3"
+              width="12"
+              height="8"
+              rx="1.5"
+              fill="currentColor"
+              opacity="0.85"
+            />
+            <path
+              d="M-3,-3 L-3,-5 C-3,-7 3,-7 3,-5 L3,-3"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              fill="none"
+              opacity="0.7"
+            />
           </svg>
           Bids
           {cartCount > 0 && (
@@ -102,6 +141,9 @@ export default function Nav({ page, onNav, cartCount, onCartOpen }: NavProps) {
         {links.map((link) =>
           link.wip ? (
             <span
+              //Delete aria-disabled and onClick attributes to enable links
+              aria-disabled={isDisabled}
+              onClick={handleClick}
               key={link.id}
               className="hidden md:block wip-tooltip top-full mt-2 text-sm whitespace-nowrap font-medium pt-2 cursor-default"
               data-tip="Work in progress"
@@ -118,7 +160,7 @@ export default function Nav({ page, onNav, cartCount, onCartOpen }: NavProps) {
             >
               {link.label}
             </button>
-          )
+          ),
         )}
       </div>
     </header>

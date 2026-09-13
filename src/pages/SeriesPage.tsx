@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
 import { paintings, seriesConfig } from "../data/paintings";
+import { Helmet } from "react-helmet-async";
 import type { Painting } from "../data/paintings";
 import BlobShape from "../components/BlobShape";
 
 interface SeriesPageProps {
   seriesId: "nature-spirit" | "science-art" | "travel-gems";
-  onBidPlaced: (paintingId: string, title: string, bidAmount: number, series: string) => void;
+  onBidPlaced: (
+    paintingId: string,
+    title: string,
+    bidAmount: number,
+    series: string,
+  ) => void;
   activeBids: Record<string, number>;
 }
 
@@ -27,14 +33,20 @@ function useCountdown(endDate: Date) {
 
 function AuctionTimer({ endDate }: { endDate: Date }) {
   const { h, m, s, expired } = useCountdown(endDate);
-  if (expired) return <span className="text-sm font-medium" style={{ color: "#FF4D6D" }}>Auction ended</span>;
+  if (expired)
+    return (
+      <span className="text-sm font-medium" style={{ color: "#FF4D6D" }}>
+        Auction ended
+      </span>
+    );
   const urgent = h < 6;
   return (
     <span
       className={`text-sm font-medium tabular-nums ${urgent ? "timer-pulse" : ""}`}
       style={{ color: urgent ? "#FF4D6D" : "#6B6880" }}
     >
-      {String(h).padStart(2, "0")}:{String(m).padStart(2, "0")}:{String(s).padStart(2, "0")} left
+      {String(h).padStart(2, "0")}:{String(m).padStart(2, "0")}:
+      {String(s).padStart(2, "0")} left
     </span>
   );
 }
@@ -64,13 +76,19 @@ function BidModal({ painting, onClose, onBid, currentUserBid }: BidModalProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-6"
-      style={{ backgroundColor: "rgba(28,27,46,0.5)", backdropFilter: "blur(4px)" }}
+      style={{
+        backgroundColor: "rgba(28,27,46,0.5)",
+        backdropFilter: "blur(4px)",
+      }}
       onClick={onClose}
     >
       <div
         className="modal-card bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl"
         onClick={(e) => e.stopPropagation()}
-        style={{ boxShadow: "0 24px 64px rgba(255,209,92,0.18), 0 4px 24px rgba(28,27,46,0.12)" }}
+        style={{
+          boxShadow:
+            "0 24px 64px rgba(255,209,92,0.18), 0 4px 24px rgba(28,27,46,0.12)",
+        }}
       >
         <h3 className="font-display text-2xl mb-1" style={{ color: "#1C1B2E" }}>
           Place a Bid
@@ -80,8 +98,13 @@ function BidModal({ painting, onClose, onBid, currentUserBid }: BidModalProps) {
         </p>
 
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="rounded-2xl p-4" style={{ backgroundColor: "#FFF6D0" }}>
-            <p className="text-sm mb-1" style={{ color: "#9CA3AF" }}>Current highest bid</p>
+          <div
+            className="rounded-2xl p-4"
+            style={{ backgroundColor: "#FFF6D0" }}
+          >
+            <p className="text-sm mb-1" style={{ color: "#9CA3AF" }}>
+              Current highest bid
+            </p>
             <p className="font-display text-xl" style={{ color: "#1C1B2E" }}>
               ${painting.currentBid.toLocaleString()}
             </p>
@@ -89,28 +112,47 @@ function BidModal({ painting, onClose, onBid, currentUserBid }: BidModalProps) {
               {painting.bidCount} bid{painting.bidCount !== 1 ? "s" : ""}
             </p>
           </div>
-          <div className="rounded-2xl p-4" style={{ backgroundColor: "#FFF6D0" }}>
-            <p className="text-sm mb-1" style={{ color: "#9CA3AF" }}>Minimum next bid</p>
+          <div
+            className="rounded-2xl p-4"
+            style={{ backgroundColor: "#FFF6D0" }}
+          >
+            <p className="text-sm mb-1" style={{ color: "#9CA3AF" }}>
+              Minimum next bid
+            </p>
             <p className="font-display text-xl" style={{ color: "#1C1B2E" }}>
               ${min.toLocaleString()}
             </p>
-            <p className="text-sm mt-0.5" style={{ color: "#6B6880" }}>+$50 increment</p>
+            <p className="text-sm mt-0.5" style={{ color: "#6B6880" }}>
+              +$50 increment
+            </p>
           </div>
         </div>
 
         {currentUserBid !== undefined && (
-          <p className="text-sm mb-3 px-3 py-2 rounded-xl" style={{ backgroundColor: "#FFF6D0", color: "#92400E" }}>
-            Your current bid: ${currentUserBid.toLocaleString()} — outbid yourself to increase.
+          <p
+            className="text-sm mb-3 px-3 py-2 rounded-xl"
+            style={{ backgroundColor: "#FFF6D0", color: "#92400E" }}
+          >
+            Your current bid: ${currentUserBid.toLocaleString()} — outbid
+            yourself to increase.
           </p>
         )}
 
         <div className="relative mb-2">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 font-display text-xl" style={{ color: "#1C1B2E" }}>$</span>
+          <span
+            className="absolute left-4 top-1/2 -translate-y-1/2 font-display text-xl"
+            style={{ color: "#1C1B2E" }}
+          >
+            $
+          </span>
           <input
             type="number"
             value={amount}
             min={min}
-            onChange={(e) => { setAmount(e.target.value); setError(""); }}
+            onChange={(e) => {
+              setAmount(e.target.value);
+              setError("");
+            }}
             className="w-full pl-8 pr-4 py-3.5 rounded-2xl text-xl font-display outline-none"
             style={{
               border: `2px solid ${error ? "#FF4D6D" : "#EDE8D8"}`,
@@ -119,7 +161,11 @@ function BidModal({ painting, onClose, onBid, currentUserBid }: BidModalProps) {
             }}
           />
         </div>
-        {error && <p className="text-sm mb-3" style={{ color: "#FF4D6D" }}>{error}</p>}
+        {error && (
+          <p className="text-sm mb-3" style={{ color: "#FF4D6D" }}>
+            {error}
+          </p>
+        )}
 
         {/* Quick bid buttons */}
         <div className="flex gap-2 mb-6 flex-wrap">
@@ -149,7 +195,10 @@ function BidModal({ painting, onClose, onBid, currentUserBid }: BidModalProps) {
           <button
             onClick={handle}
             className="flex-1 py-3 rounded-full text-base font-medium transition-all hover:opacity-90"
-            style={{ background: "linear-gradient(135deg, #FFD15C, #FFBD2E)", color: "#1C1B2E" }}
+            style={{
+              background: "linear-gradient(135deg, #FFD15C, #FFBD2E)",
+              color: "#1C1B2E",
+            }}
           >
             Confirm Bid →
           </button>
@@ -186,14 +235,19 @@ function PaintingCard({
         transition: "box-shadow 0.3s",
       }}
       onMouseEnter={(e) => {
-        (e.currentTarget as HTMLDivElement).style.boxShadow = "0 10px 36px rgba(255,209,92,0.22)";
+        (e.currentTarget as HTMLDivElement).style.boxShadow =
+          "0 10px 36px rgba(255,209,92,0.22)";
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 16px rgba(255,209,92,0.08)";
+        (e.currentTarget as HTMLDivElement).style.boxShadow =
+          "0 2px 16px rgba(255,209,92,0.08)";
       }}
     >
       {/* Image */}
-      <div className="relative overflow-hidden" style={{ height: "280px", backgroundColor: accentSoft }}>
+      <div
+        className="relative overflow-hidden"
+        style={{ height: "280px", backgroundColor: accentSoft }}
+      >
         <img
           src={painting.imageUrl}
           alt={painting.title}
@@ -205,7 +259,10 @@ function PaintingCard({
           className="absolute top-3 right-3 px-3 py-1.5 rounded-full backdrop-blur-sm flex items-center gap-1.5"
           style={{ backgroundColor: "rgba(255,255,255,0.9)" }}
         >
-          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: accent }} />
+          <div
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ backgroundColor: accent }}
+          />
           <AuctionTimer endDate={painting.auctionEnds} />
         </div>
         {userBid !== undefined && (
@@ -226,7 +283,10 @@ function PaintingCard({
         <p className="text-sm mb-3" style={{ color: "#9CA3AF" }}>
           {painting.medium} · {painting.size} · {painting.year}
         </p>
-        <p className="text-base leading-relaxed mb-5 flex-1" style={{ color: "#6B6880" }}>
+        <p
+          className="text-base leading-relaxed mb-5 flex-1"
+          style={{ color: "#6B6880" }}
+        >
           {painting.description}
         </p>
 
@@ -237,13 +297,17 @@ function PaintingCard({
         >
           <div className="flex justify-between items-end">
             <div>
-              <p className="text-sm mb-0.5" style={{ color: accent }}>Current bid</p>
+              <p className="text-sm mb-0.5" style={{ color: accent }}>
+                Current bid
+              </p>
               <p className="font-display text-2xl" style={{ color: "#1C1B2E" }}>
                 ${painting.currentBid.toLocaleString()}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-sm mb-0.5" style={{ color: "#9CA3AF" }}>Starting</p>
+              <p className="text-sm mb-0.5" style={{ color: "#9CA3AF" }}>
+                Starting
+              </p>
               <p className="text-base font-medium" style={{ color: "#6B6880" }}>
                 ${painting.startingBid.toLocaleString()}
               </p>
@@ -257,7 +321,9 @@ function PaintingCard({
         <button
           onClick={onBidClick}
           className="w-full py-3 rounded-full text-sm font-medium text-white transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
-          style={{ background: `linear-gradient(135deg, ${accent}, ${accent}cc)` }}
+          style={{
+            background: `linear-gradient(135deg, ${accent}, ${accent}cc)`,
+          }}
         >
           {userBid !== undefined ? "Raise My Bid →" : "Place a Bid →"}
         </button>
@@ -266,7 +332,11 @@ function PaintingCard({
   );
 }
 
-export default function SeriesPage({ seriesId, onBidPlaced, activeBids }: SeriesPageProps) {
+export default function SeriesPage({
+  seriesId,
+  onBidPlaced,
+  activeBids,
+}: SeriesPageProps) {
   const config = seriesConfig[seriesId];
   const seriesPaintings = paintings.filter((p) => p.series === seriesId);
   const [bidTarget, setBidTarget] = useState<Painting | null>(null);
@@ -279,6 +349,17 @@ export default function SeriesPage({ seriesId, onBidPlaced, activeBids }: Series
   };
 
   return (
+    <>
+    <Helmet>
+      <title>{`${config.label} | Sarah Nessa Oil Painter`}</title>
+      <meta
+        name="description"
+        content={`Sarah Nessa Oil Painter - ${config.description}`}
+      />
+      <meta property="og:title" content={`${config.label} | Sarah Nessa Oil Painter`} />
+      <meta property="og:type" content="website" />
+    </Helmet>
+
     <div className="min-h-screen" style={{ backgroundColor: "#FAFAFA" }}>
       {/* Header */}
       <section
@@ -287,10 +368,20 @@ export default function SeriesPage({ seriesId, onBidPlaced, activeBids }: Series
       >
         {/* Blobs */}
         <div className="blob-a absolute -top-20 -right-20 pointer-events-none">
-          <BlobShape color={config.accent} opacity={0.2} size={380} variant="b" />
+          <BlobShape
+            color={config.accent}
+            opacity={0.2}
+            size={380}
+            variant="b"
+          />
         </div>
         <div className="blob-b absolute bottom-0 left-10 pointer-events-none">
-          <BlobShape color={config.accent} opacity={0.12} size={280} variant="d" />
+          <BlobShape
+            color={config.accent}
+            opacity={0.12}
+            size={280}
+            variant="d"
+          />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -300,33 +391,61 @@ export default function SeriesPage({ seriesId, onBidPlaced, activeBids }: Series
           >
             Series
           </p>
-          <h1 className="font-display text-5xl md:text-6xl mb-4" style={{ color: "#1C1B2E" }}>
+          <h1
+            className="font-display text-5xl md:text-6xl mb-4"
+            style={{ color: "#1C1B2E" }}
+          >
             {config.label}
           </h1>
-          <p className="text-xl mb-6 italic font-display" style={{ color: config.accent }}>
+          <p
+            className="text-xl mb-6 italic font-display"
+            style={{ color: config.accent }}
+          >
             {config.tagline}
           </p>
-          <div className="w-12 h-0.5 mb-6" style={{ backgroundColor: config.accent }} />
-          <p className="max-w-2xl text-base leading-relaxed" style={{ color: "#3D3B52" }}>
+          <div
+            className="w-12 h-0.5 mb-6"
+            style={{ backgroundColor: config.accent }}
+          />
+          <p
+            className="max-w-2xl text-base leading-relaxed"
+            style={{ color: "#3D3B52" }}
+          >
             {config.description}
           </p>
 
           <div className="mt-8 flex items-center gap-6">
             <div className="text-center">
-              <p className="font-display text-3xl" style={{ color: "#1C1B2E" }}>{seriesPaintings.length}</p>
-              <p className="text-sm" style={{ color: "#9CA3AF" }}>Works</p>
+              <p className="font-display text-3xl" style={{ color: "#1C1B2E" }}>
+                {seriesPaintings.length}
+              </p>
+              <p className="text-sm" style={{ color: "#9CA3AF" }}>
+                Works
+              </p>
             </div>
-            <div className="w-px h-10" style={{ backgroundColor: config.accent, opacity: 0.3 }} />
+            <div
+              className="w-px h-10"
+              style={{ backgroundColor: config.accent, opacity: 0.3 }}
+            />
             <div className="text-center">
               <p className="font-display text-3xl" style={{ color: "#1C1B2E" }}>
                 {seriesPaintings.reduce((s, p) => s + p.bidCount, 0)}
               </p>
-              <p className="text-sm" style={{ color: "#9CA3AF" }}>Total bids</p>
+              <p className="text-sm" style={{ color: "#9CA3AF" }}>
+                Total bids
+              </p>
             </div>
-            <div className="w-px h-10" style={{ backgroundColor: config.accent, opacity: 0.3 }} />
+            <div
+              className="w-px h-10"
+              style={{ backgroundColor: config.accent, opacity: 0.3 }}
+            />
             <div className="text-center">
-              <p className="font-display text-3xl" style={{ color: "#1C1B2E" }}>Live</p>
-              <p className="text-sm" style={{ color: "#9CA3AF" }}>All auctions</p>
+              <p className="font-display text-3xl" style={{ color: "#1C1B2E" }}>
+                Live
+              </p>
+              <p className="text-sm" style={{ color: "#9CA3AF" }}>
+                All auctions
+              </p>
             </div>
           </div>
         </div>
@@ -355,7 +474,8 @@ export default function SeriesPage({ seriesId, onBidPlaced, activeBids }: Series
             New works added regularly
           </p>
           <p className="text-sm mb-0" style={{ color: "#6B6880" }}>
-            The studio is active. Follow along or reach out to enquire about upcoming pieces.
+            The studio is active. Follow along or reach out to enquire about
+            upcoming pieces.
           </p>
         </div>
       </section>
@@ -370,5 +490,6 @@ export default function SeriesPage({ seriesId, onBidPlaced, activeBids }: Series
         />
       )}
     </div>
+      </>
   );
 }
